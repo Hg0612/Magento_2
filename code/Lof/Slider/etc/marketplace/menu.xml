@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+    	<add id="Lof_Slider::slider" icon="fa fa-sliders" title="Sliders" module="Lof_Slider" sortOrder="50" resource="Lof_Slider::slider"/>
+    	<add id="Lof_Slider::manager_slider" title="Manager Slider" module="Lof_Slider" action="catalog/slider/index" sortOrder="51" parent="Lof_Slider::slider" resource="Lof_Slider::manager_slider"/>
+    	<add id="Lof_Slider::add_slider" title="Add Slider" module="Lof_Slider" action="catalog/slider/new" sortOrder="51" parent="Lof_Slider::slider" resource="Lof_Slider::manager_slider"/>
+    </menu>
+</config>

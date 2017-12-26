@@ -1,0 +1,137 @@
+<?php
+/**
+ * Venustheme
+ * 
+ * NOTICE OF LICENSE
+ * 
+ * This source file is subject to the Venustheme.com license that is
+ * available through the world-wide-web at this URL:
+ * http://www.venustheme.com/license-agreement.html
+ * 
+ * DISCLAIMER
+ * 
+ * Do not edit or add to this file if you wish to upgrade this extension to newer
+ * version in the future.
+ * 
+ * @category   Venustheme
+ * @package    Ves_Blog
+ * @copyright  Copyright (c) 2016 Venustheme (http://www.venustheme.com/)
+ * @license    http://www.venustheme.com/LICENSE-1.0.html
+ */
+namespace Ves\Blog\Setup;
+
+use Magento\Framework\Setup\InstallSchemaInterface;
+use Magento\Framework\Setup\ModuleContextInterface;
+use Magento\Framework\Setup\SchemaSetupInterface;
+use Magento\Framework\DB\Adapter\AdapterInterface;
+
+class InstallSchema implements InstallSchemaInterface
+{
+    public function install(SchemaSetupInterface $setup, ModuleContextInterface $context)
+    {
+        $installer = $setup;
+
+        $installer->startSetup();
+
+        /**
+         * Drop table if exists
+         */
+        $setup->getConnection()->dropTable($setup->getTable('lof_marketplace_slider'));
+
+        /**
+         * Create table 'ves_blog_category'
+         */
+        $table = $installer->getConnection()->newTable(
+            $installer->getTable('lof_marketplace_slider')
+        )
+        ->addColumn(
+            'slider_id',
+            \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+            null,
+            ['identity' => true, 'nullable' => false, 'primary' => true],
+            'Category ID'
+        )
+        ->addColumn(
+            'title',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            255,
+            ['nullable' => false],
+            'Title'
+        )
+        ->addColumn(
+            'caption',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            255,
+            ['nullable' => true],
+            'Caption'
+        )
+        ->addColumn(
+            'url_link',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            null,
+            ['nullable' => true],
+            'url_link'
+        )
+        ->addColumn(
+            'image_width',
+            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            null,
+            ['nullable' => true],
+            'image width'
+        )
+        ->addColumn(
+            'image_height',
+            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            null,
+            ['nullable' => true],
+            'image height'
+        )
+        ->addColumn(
+            'slider_speed',
+            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            null,
+            ['nullable' => true],
+            'slider speed'
+        )
+        ->addColumn(
+            'slider_duration',
+            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            null,
+            ['nullable' => true],
+            'slider duration'
+        )
+        ->addColumn(
+            'image_url',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            null,
+            ['nullable' => true],
+            'image url'
+        )
+        ->addColumn(
+            'image_id',
+            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            null,
+            ['nullable' => true],
+            'image_id'
+        )
+        ->addColumn(
+            'seller_id',
+            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            null,
+            ['nullable' => true],
+            'seller_id'
+        )
+        ->addColumn(
+            'status',
+            \Magento\Framework\DB\Ddl\Table::TYPE_SMALLINT,
+            null,
+            ['nullable' => true],
+            'status'
+        )
+        ->setComment(
+            'Slider Table'
+        );
+        $installer->getConnection()->createTable($table);
+        $installer->endSetup();
+    }
+}

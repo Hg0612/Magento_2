@@ -1,0 +1,158 @@
+<?php
+ $helper = $this->helper("Lof\MarketPlace\Helper\Data");
+
+ $current_slider = $block->getSliderByID();
+ $image_url = [];
+ if(isset($current_slider["image_url"])){
+ 	$image_url = json_decode($current_slider["image_url"]);
+ }
+
+?>
+<style type="text/css">
+	img.image_show {max-width: 100%;}
+	#list_image input{margin-top: 20px;}
+</style>
+<form data-mage-init='{"validation": {}}' class="entry-edit form-inline" action="<?php echo $block->getUrl('*/*/saveslider');?>" enctype="multipart/form-data" method="post">
+	<?php
+	if(isset($current_slider["slider_id"])){ ?>
+		<input type="hidden" name="slider_id" class="admin__control-text" value="<?php echo $current_slider["slider_id"]; ?>" />
+	<?php } ?>
+	<input type="hidden" name="status" class="admin__control-text" value="0" />
+	<div class="lof-mp-page-title page-title">
+		<h2><?php echo (!$current_slider) ? __('Add New Slider') : __('Edit Slider')?></h2>
+		<div class="page-actions-buttons">
+			 <div class="actions-split save primary" title="Save">
+				<button class="action-default primary" title="<?php echo __('Save ') ?>" type="submit">
+					<span><span><?php echo __('Save Slider') ?></span></span>
+				</button>
+			</div>
+		</div>
+	</div>
+	<div class="admin__fieldset-wrapper-content">
+		<fieldset class="admin__fieldset">
+
+			<div class="admin__field">
+				<label class="admin__field-label">
+					<?php echo __("Title"); ?>
+				</label>
+				<div class="admin__field-control">
+					<input type="text" value="<?php echo isset($current_slider['title'])? $current_slider['title'] : '' ?>" name="title" class="admin__control-text"  />
+				</div>
+			</div>
+
+			<div class="admin__field">
+				<label class="admin__field-label">
+					<?php echo __("Image upload"); ?>
+				</label>
+
+				<div class="admin__field-control" id="image">
+			        <div class="row fileupload-buttonbar">
+			            <div class="col-lg-12">
+			                <span class="btn btn-success fileinput-button">
+			                    <i class="glyphicon glyphicon-plus"></i>
+			                    <span>Add files...</span>
+			                    <input type="file" name="file[]" multiple id="gallery-photo-add">
+			                </span>
+			                <button id="cancel_upload" type="button" class="btn btn-warning cancel'">
+			                	<i class="glyphicon glyphicon-ban-circle"></i>
+			                	<span>Cancel</span>
+			                </button>
+			            </div>
+			        </div>
+			        <table  style="margin-top: 10px" role="presentation" id="list_image" class="table table-striped">
+			        	<tbody>
+			        		<?php foreach($image_url as $value): ?>
+			        			<tr>
+			        				<td>
+			        					<image src="<?php echo $helper->getMediaUrl() . $value->image_url; ?>"/>
+			        					<input type="text" value="<?php echo $value->caption; ?>" class="admin__control-text" name="caption[]" placeholder="Caption photo"/>
+
+						        		<input type="text" value="<?php echo $value->url_link; ?>" class="admin__control-text" name="url_link[]" placeholder="Link URL"/>
+			        				</td>
+			        			</tr>
+							<?php endforeach;?>
+			        	</tbody>
+			        </table>
+				</div>
+			</div>
+
+			<div class="admin__field">
+				<label class="admin__field-label">
+					<?php echo __("Image Width (in 'px') :"); ?><span style="color:red">*</span>
+				</label>
+				<div class="admin__field-control">
+					<input type="text" name="image_width" value="<?php echo isset($current_slider['image_width'])? $current_slider['image_width'] : '' ?>" class="admin__control-text required validate-number" />
+				</div>
+			</div>
+
+			<div class="admin__field">
+				<label class="admin__field-label">
+					<?php echo __("Image Height (in 'px') :"); ?><span style="color:red">*</span>
+				</label>
+				<div class="admin__field-control">
+					<input type="text" name="image_height" value="<?php echo isset($current_slider['image_height'])? $current_slider['image_height'] : '' ?>" class="admin__control-text required validate-number" />
+				</div>
+			</div>
+
+			<div class="admin__field">
+				<label class="admin__field-label">
+					<?php echo __("Slider Speed (in 'milliseconds') :"); ?><span style="color:red">*</span>
+				</label>
+				<div class="admin__field-control">
+					<input type="text" name="slider_speed" value="<?php echo isset($current_slider['slider_speed'])? $current_slider['slider_speed'] : '' ?>" class="admin__control-text required validate-number" />
+				</div>
+			</div>
+
+			<div class="admin__field">
+				<label class="admin__field-label">
+					<?php echo __("Slider Duration (in 'milliseconds') :"); ?><span style="color:red">*</span>
+				</label>
+				<div class="admin__field-control">
+					<input type="text" name="slider_duration" value="<?php echo isset($current_slider['slider_duration'])? $current_slider['slider_duration'] : '' ?>" class="admin__control-text required validate-number"/>
+				</div>
+			</div>
+			<input type="hidden" name="seller_id" value="<?php echo $helper->getSellerId(); ?>">
+			<?php if(isset($current_slider["image_url"])){?>
+				<input type="hidden" name="photo" value="<?php echo $current_slider["image_url"]; ?>"/>
+			<?php } ?>
+		</fieldset>
+	</div>
+
+</form>
+<script>
+	require(['jquery'], function(){
+		var imagesPreview = function(input, placeToInsertImagePreview) {
+	        if (input.files) {
+	            var filesAmount = input.files.length;
+	            for (i = 0; i < filesAmount; i++) {
+	                var reader = new FileReader();
+	                reader.onload = function(event) {
+	                	jQuery("#list_image").find('tbody')
+						    .append(jQuery('<tr>')
+						        .append(jQuery('<td>')
+						            .append(jQuery('<img>')
+						                .attr('src', event.target.result).attr('class', 'image_show')
+						                .text('Image cell')
+						            )
+						            .append(`
+										<input type="text" value="" class="admin__control-text" name="caption[]" placeholder="Caption photo"/>
+						        		<input type="text" value="" class="admin__control-text" name="url_link[]" placeholder="Link URL"/>
+						            `)
+						        )
+						    )
+	                	}
+	                reader.readAsDataURL(input.files[i]);
+	            }
+	        }
+    	};
+
+	    jQuery('#gallery-photo-add').on('change', function() {
+	    	jQuery("#list_image").find('tbody').empty();
+	        imagesPreview(this, '#list_image');
+	    });
+	    jQuery('#cancel_upload').on('click', function() {
+	    	jQuery("#list_image").find('tbody').empty();
+	        jQuery("#gallery-photo-add").val("");
+	    });
+	})
+</script>

@@ -1,0 +1,296 @@
+<?php
+
+$items = $this->getOrder()->getAllItems(); 
+
+$helper = $this->helper('Lof\MarketPlace\Helper\Data');
+$objectManager   = \Magento\Framework\App\ObjectManager::getInstance ();
+$calculate        = $objectManager->get ( 'Lof\MarketPlace\Model\CalculateCommission' );
+$orderitems = $objectManager->get ( 'Lof\MarketPlace\Model\Orderitems' );
+?>
+<div class="row">
+  <div class="col-md-12">
+    <div class="x_panel">
+      <div class="x_title">
+          <h2><?php echo __('Order Design');?></h2>
+          <div class="clearfix"></div>
+      </div>
+      <div class="x_content">
+        <div class="content invoice">
+          <div class="row">
+            <div class="col-xs-12 invoice-header">
+              <h1>
+                <i class="fa fa-globe"></i> <?php echo __('Order'); ?>
+                <small class="pull-right"><?php echo __('Create At');?>: <?php echo $this->getOrderDate();?></small>
+              </h1>
+            </div>
+          </div> 
+          <div class="row invoice-info">
+            <div class="col-sm-3 invoice-col">
+              <b><?php echo __('Billing Address'); ?></b>
+              <br>
+              <address>
+                  <?php echo $this->getFormattedAddress(); ?>
+              </address>
+            </div>
+            <!-- /.col -->
+            <div class="col-sm-3 invoice-col">
+                <b><?php echo __('Shipping Address'); ?></b>
+                <br>
+                <address>
+                <?php echo $this->getBillingAddress(); ?>
+                </address>
+            </div>
+            <!-- /.col -->
+            <div class="col-sm-3 invoice-col">
+              <?php /* @escapeNotVerified */ echo __('<b>Order:</b> # %1', $this->getOrder()->getRealOrderId()) ?> 
+              
+              <br>
+              <b><?php echo __('Order Date');?>:</b> <?php echo $this->getOrderDate(); ?>
+              <br>
+              <b><?php echo __('Order Status'); ?>:</b> <?php echo $this->getOrder()->getStatusLabel(); ?>
+              <br>
+              <b><?php echo __('Purchased From'); ?>:</b> <?php echo $this->getOrderStoreName(); ?>
+            </div>
+             <!-- /.col -->
+            <div class="col-sm-3 invoice-col">
+                <b><?php echo __('Account Information '); ?></b>
+                <br>
+                
+                <b><?php echo __('Customer Name');?>:</b> <?php echo $this->getOrder()->getCustomerName(); ?>
+              <br>
+              <b><?php echo __('Email'); ?>:</b> <?php echo $this->getOrder()->getCustomerEmail(); ?>
+              <br>
+              <b><?php echo __('Customer Group'); ?>:</b> <?php echo $this->getCustomerGroupName(); ?>
+            </div>
+          </div>
+          <div class="row">
+              <div class="col-xs-12 table">
+                <table class="table table-striped edit-order-table">
+                  <thead>
+                    <tr>
+                      <th><?php echo __('Product'); ?></th>
+                      <th><?php echo __('Item Status'); ?></th>
+                      <th><?php echo __('Qty'); ?></th>
+                      <th><?php echo __('Price'); ?></th>
+                      
+                      <th><?php echo __('Subtotal');?></th>
+                      <th><?php echo __('Tax Amount');?></th>
+                      <th><?php echo __('Tax Percent');?></th>
+                      <th><?php echo __('Discount Amount');?></th>
+                       <th><?php echo __('Row Total');?></th>
+                      <th><?php echo __('Admin Commission');?></th>
+                      <th><?php echo __('Seller Total');?></th>
+                      <th><?php echo __('Seller');?></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <?php 
+                    $subtotal = $subtotal_seller = $tax = $tax_seller = $discount = $discount_seller = $grand_total = $grand_total_seller = $refund_total_seller = $seller_amount = $refund_total =$seller_total=$seller_total_seller= 0;
+                    $seller = '';
+                    foreach($items as $item) { 
+                      if($item->getData('base_row_total') >0)  {
+                       
+                        $refund = $item->getData('amount_refunded')+$item->getData('tax_refunded')-$item->getData('discount_refunded');
+                        $refund_total = $refund_total+$refund;
+                        $product_id = $item->getData('product_id'); 
+                        $subtotalIncl = $item->getData('base_row_total_incl_tax');
+                        $discount_amount = $item->getData('discount_amount');
+                        $tax_amount = $item->getData('tax_amount');
+                        $total =   $item->getData('base_row_total');
+
+                        $row_total =  $total + $tax_amount - $discount_amount;
+                        $subtotal = $subtotal + $total;
+                        $tax = $tax + $tax_amount;
+                        $discount = $discount + $discount_amount;
+                        $subtotalExcl = $row_total - $tax_amount;
+                        $grand_total = $grand_total + $row_total;
+                        $seller_name = $this->getSeller($product_id)->getData('name');
+                        if($seller == $seller_name) {
+                          $name = '';
+                        } else {
+                          $name = $seller_name;
+                        }
+                        $seller_id = $this->getSeller($product_id)->getData('seller_id');
+
+                        $admin_commission = $this->getOrderItems($product_id)->getData('admin_commission_order');
+                        $seller_commission = $this->getOrderItems($product_id)->getData('seller_commission_order');
+                        if($seller_id == $helper->getSellerId()) {
+                          $subtotal_seller = $subtotal_seller + $total;
+                          $tax_seller = $tax_seller + $tax_amount;
+                          $discount_seller = $discount_seller + $discount_amount;
+                          $grand_total_seller = $grand_total_seller + $row_total;
+                          $seller_total_seller += $seller_commission;
+                        }
+                        $seller_total += $seller_commission;
+                        ?>
+                      <tr>
+                        <td>
+                          <div class="product-title"><?php echo $item->getData('name');?></div>
+                          <div class="product-sku-block"><span><?php echo __('SKU');?>:</span><?php echo $item->getData('sku');?></div>
+                          <?php 
+                          if(isset($item->getData('product_options')['attributes_info'])) {
+                            echo '<dl class="item-options">';
+                              foreach ($item->getData('product_options')['attributes_info'] as $key => $attributes_info) {
+                                echo '<dt>'.$attributes_info['label'].'</dt>';
+                                echo '<dd>'.$attributes_info['value'].'</dd>';
+                              }
+                            echo '</dl>';
+                          }
+                          ?>
+                        </td>
+                        <td><?php echo $item->getStatus()->getText();?></td>
+                        <td>
+                          <table class="qty-table">
+                            <tbody>
+                              <?php if($item->getData('qty_ordered') > 0) { ?>
+                              <tr>
+                                <th><?php echo __('Ordered'); ?></th>
+                                <td><?php echo (int)$item->getData('qty_ordered'); ?></td>
+                              </tr>
+                              <?php } ?>
+                              <?php if($item->getData('qty_ordered') > 0) { ?>
+                              <tr>
+                                <th><?php echo __('Invoiced'); ?></th>
+                                <td><?php echo (int)$item->getData('qty_invoiced'); ?></td>
+                              </tr>
+                              <?php } ?>
+                              <?php if($item->getData('qty_refunded') > 0) { ?>
+                              <tr>
+                                <th><?php echo __('Refunded'); ?></th>
+                                <td><?php echo (int)$item->getData('qty_refunded'); ?></td>
+                              </tr>
+                              <?php } ?>
+                              <?php if($item->getData('qty_canceled') > 0) { ?>
+                              <tr>
+                                <th><?php echo __('Canceled'); ?></th>
+                                <td><?php echo (int)$item->getData('qty_canceled'); ?></td>
+                              </tr>
+                              <?php } ?>
+                            </tbody>
+                          </table>
+                        </td>
+                        <td><?php echo $helper->getPriceFomat($item->getData('price'));?></td>
+                        
+                        <td><?php echo $helper->getPriceFomat($total);?></td>
+                        <td><?php echo $helper->getPriceFomat($tax_amount);?></td>
+                        <td><?php echo $item->getData('tax_percent').'%';?></td>
+                        <td><?php echo $helper->getPriceFomat($discount_amount);?></td>
+                        <td><?php echo $helper->getPriceFomat($row_total);?></td>
+                        <td><?php echo $helper->getPriceFomat($admin_commission); ?></td>
+                        <td><?php echo $helper->getPriceFomat($seller_commission); ?></td>
+                        <td><?php echo $name; ?></td>
+                      </tr>
+                  <?php $seller = $seller_name;  } 
+
+                  } ?>
+                  </tbody>
+                </table>
+            </div>
+            <!-- /.col -->
+          </div>
+          <div class="row">
+              <!-- accepted payments column -->
+              <div class="col-xs-4">
+                <p class="lead"><?php echo __('Payment Methods');?>:</p>
+                <img src="<?php echo $helper->getMediaUrl() ;?>/images/visa.png" alt="Visa">
+                <img src="<?php echo $helper->getMediaUrl() ;?>/images/mastercard.png" alt="Mastercard">
+                <img src="<?php echo $helper->getMediaUrl() ;?>/images/american-express.png" alt="American Express">
+                <img src="<?php echo $helper->getMediaUrl() ;?>/images/paypal.png" alt="Paypal">
+                <p class="text-muted well well-sm no-shadow" style="margin-top: 10px;">
+                  <?php echo $this->getOrder()->getPayment()->getMethodInstance()->getTitle(); ?>
+                </p>
+                <p><?php echo __('The order was placed using');?> <?php echo $this->getOrder()->getData('order_currency_code');?>.</p>
+              </div>
+              <!-- /.col -->
+              <div class="col-xs-4">
+                <p class="lead"><?php echo __('Order Totals');?></p>
+                <div class="table-responsive">
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <th style="width:50%"><?php echo __('Subtotal');?></th>
+                        <td><?php echo $helper->getPriceFomat($subtotal); ?></td>
+                      </tr>
+                      <tr>
+                        <th><?php echo __('Shipping & Handling');?></th>
+                        <td><?php echo $helper->getPriceFomat($this->getOrder()->getData('shipping_amount')); ?></td>
+                      </tr>
+                      <tr>
+                        <th><?php echo __('Tax');?></th>
+                        <td><?php echo $helper->getPriceFomat($tax); ?></td>
+                      </tr>
+                       <tr>
+                        <th><?php echo __('Discount');?></th>
+                        <td><?php echo $helper->getPriceFomat(-$discount); ?></td>
+                      </tr>
+                       <tr>
+                        <th><?php echo __('Grand Total');?></th>
+                        <td><?php echo $helper->getPriceFomat($grand_total); ?></td>
+                      </tr>
+                      <?php if($refund_total > 0) { ?>
+                       <tr>
+                        <th><?php echo __('Refund Total');?></th>
+                        <td><?php echo $helper->getPriceFomat($refund_total); ?></td>
+                      </tr>  
+                      <?php } ?>
+                       <tr>
+                        <th><?php echo __('Seller Amount');?></th>
+                        <td><?php echo $helper->getPriceFomat($seller_total); ?></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="col-xs-4">
+                <p class="lead"><?php echo __('Order Totals').' '.$helper->getSellerByCustomer()['name'];?></p>
+                <div class="table-responsive">
+                  <table class="table">
+                    <tbody>
+                      <tr>
+                        <th style="width:50%"><?php echo __('Subtotal');?></th>
+                        <td><?php echo $helper->getPriceFomat($subtotal_seller); ?></td>
+                      </tr>
+                      <tr>
+                        <th><?php echo __('Shipping & Handling');?></th>
+                        <td><?php echo $helper->getPriceFomat($this->getOrder()->getData('shipping_amount')); ?></td>
+                      </tr>
+                      <tr>
+                        <th><?php echo __('Tax');?></th>
+                        <td><?php echo $helper->getPriceFomat($tax_seller); ?></td>
+                      </tr>
+                       <tr>
+                        <th><?php echo __('Discount');?></th>
+                        <td><?php echo $helper->getPriceFomat(-$discount_seller); ?></td>
+                      </tr>
+                       <tr>
+                        <th><?php echo __('Grand Total');?></th>
+                        <td><?php echo $helper->getPriceFomat($grand_total_seller); ?></td>
+                      </tr>
+                      <?php if($refund_total > 0) { ?>
+                       <tr>
+                        <th><?php echo __('Refund Total');?></th>
+                        <td><?php echo $helper->getPriceFomat($refund_total_seller); ?></td>
+                      </tr>  
+                      <?php } ?>
+                       <tr>
+                        <th><?php echo __('Seller Amount');?></th>
+                        <td><?php echo $helper->getPriceFomat($seller_total_seller); ?></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <!-- /.col -->
+          </div>
+          <!-- this row will not appear when printing -->
+          <div class="row no-print">
+              <div class="col-xs-12">
+                <button class="btn btn-default" onclick="window.print();"><i class="fa fa-print"></i> Print</button>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>  
+</div>
+
