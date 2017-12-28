@@ -26,16 +26,15 @@
             <container name="seller.view.container" htmlTag="div" htmlClass="seller-view" after="-">
                 <block class="Lof\MarketPlace\Block\Seller\View" name="seller.vacation" template="Lof_MarketPlace::seller/vacation.phtml"/>
                 <block class="Lof\MarketPlace\Block\Seller\View" name="seller.image" template="Lof_MarketPlace::seller/image.phtml"/>
-                
             </container>
         </referenceContainer>
         <referenceContainer name="sidebar.main">
             <!-- <block class="Lof\MarketPlace\Block\GroupList" name="group_list" template="Lof_MarketPlace::grouplist.phtml"/> -->
             <block class="Lof\MarketPlace\Block\Seller\Info" name="seller_info" template="Lof_MarketPlace::seller/info.phtml"/>
-            <block class="Magento\LayeredNavigation\Block\Navigation\Category" name="catalog.leftnav" before="-" template="layer/view.phtml">
-                <block class="Magento\LayeredNavigation\Block\Navigation\State" name="catalog.navigation.state" as="state" />
-                <block class="Magento\LayeredNavigation\Block\Navigation\FilterRenderer" name="catalog.navigation.renderer" as="renderer" template="layer/filter.phtml"/>
-            </block>
+           <!--  <block class="Magento\LayeredNavigation\Block\Navigation\Category" name="catalog.leftnav" before="-" template="layer/view.phtml">
+               <block class="Magento\LayeredNavigation\Block\Navigation\State" name="catalog.navigation.state" as="state" />
+               <block class="Magento\LayeredNavigation\Block\Navigation\FilterRenderer" name="catalog.navigation.renderer" as="renderer" template="layer/filter.phtml"/>
+           </block> -->
         </referenceContainer>
         <referenceContainer name="content">
 

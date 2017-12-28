@@ -21,9 +21,15 @@
  */
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="2columns-left" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+	<head>
+		<css src="Lof_Slider::css/camera.css" />
+	</head>
+
 	<body>
         <referenceContainer name="columns.top">
-            <referenceBlock class="Lof\Slider\Block\Seller\View" name="seller.image" template="Lof_MarketPlace::seller/image.phtml"/>
+            <container name="seller.view.container" htmlTag="div">
+                <block class="Lof\Slider\Block\Seller\Slider" name="seller.slider" template="Lof_Slider::seller/slider.phtml"/>
+            </container>
         </referenceContainer>
     </body>
 </page>

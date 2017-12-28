@@ -87,7 +87,7 @@ class Slider extends \Magento\Framework\View\Element\Template {
         } else {
             $slider_id = $this->getSliderId();
         }
-        $slider = $this->slider->getCollection()->addFieldToFilter('is_active','1')->addFieldToFilter('seller_id',$this->_helper->getSellerId());
+        $slider = $this->slider->getCollection()->addFieldToFilter('seller_id',$this->_helper->getSellerId());
         return $slider;
     }
 

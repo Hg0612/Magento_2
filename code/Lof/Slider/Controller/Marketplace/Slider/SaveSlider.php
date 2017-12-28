@@ -59,6 +59,8 @@ class SaveSlider extends \Magento\Framework\App\Action\Action {
 
     protected $_mediaDirectory;
     protected $_fileUploaderFactory;
+    //-------------------. thumnail image
+    protected $_storeManager;
 
     /**
      *
@@ -74,6 +76,9 @@ class SaveSlider extends \Magento\Framework\App\Action\Action {
         \Magento\Framework\View\Result\PageFactory $resultPageFactory,
         \Magento\Framework\Filesystem $filesystem,
         \Magento\MediaStorage\Model\File\UploaderFactory $fileUploaderFactory,
+        //-------------------. thumnail image
+
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         $data = []
     ) {
         parent::__construct ($context,$data);
@@ -85,6 +90,8 @@ class SaveSlider extends \Magento\Framework\App\Action\Action {
         $this->resultPageFactory = $resultPageFactory;
         $this->_frontendUrl      = $frontendUrl;
         $this->_actionFlag       = $context->getActionFlag();
+        //-------------------. thumnail image
+        $this->_storeManager = $storeManager;
 
     }
 
@@ -138,8 +145,6 @@ class SaveSlider extends \Magento\Framework\App\Action\Action {
                     if (isset($data['slider_id'])) {
                         $model->load($data['slider_id']);
                     }
-                    // echo "<pre>";
-                    // var_dump(get_class_methods($model));die;
                     $model->setData($data);
                     $model->save();
                     $this->_redirect ('catalog/slider' );
@@ -181,9 +186,11 @@ class SaveSlider extends \Magento\Framework\App\Action\Action {
                 $uploader->setFilesDispersion(false);
                 $result = $uploader->save($mediaDirectory->getAbsolutePath($mediaFolder)
                     );
+                // $this->resize($result['name'], 200, 100);
                 $file_path[$i] = $mediaFolder.$result['name'];
             }
         }
         return $file_path;
     }
+
 }
