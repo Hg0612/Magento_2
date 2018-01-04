@@ -1,0 +1,82 @@
+<?php
+$helper = $this->helper("Lof\MarketPlace\Helper\Data");
+$data = $block->getSlider();
+function UR_exists($url){
+   $headers = get_headers($url);
+   return stripos($headers[0],"200 OK")?true:false;
+}
+if($data):
+	$image = json_decode($data["image_url"]);
+	$width = 200;
+	$height = 100;
+	foreach ($image as $value){
+		$url = $helper->getMediaUrl() . "resized/" . $width . "/" . $value->image_url;
+		if(!UR_exists($url)){
+			$value->thumbnail = $block->resize($value->image_url, $width , $height);
+		}else{
+			$value->thumbnail = $url;
+		}
+	}
+?>
+<div class="camera_wrap camera_magenta_skin" id="camera_wrap_2">
+	<?php foreach ($image as $value): ?>
+    <div data-thumb="<?php echo isset($value->thumbnail)? $value->thumbnail : '' ?>" data-link="<?php echo $value->url_link; ?>" data-target="_blank" data-src="<?php echo $helper->getMediaUrl() . $value->image_url; ?>">
+        <div class="camera_caption fadeFromBottom">
+            <?php echo $value->caption; ?>
+        </div>
+    </div>
+    <?php endforeach;?>
+</div>
+<div style="clear:both; display:block; height:50px"></div>
+<script type="text/javascript">
+
+	requirejs([
+		'require',
+		'jquery',
+		'jquery_Customized',
+		'jquery_Easing',
+		'Camera'
+		],
+            function (require,jquery,jquery_Customized,jquery_Easing,camera) {
+
+            	var image_height = '<?php echo $data["image_height"] ?>px';
+				var slider_speed = '<?php echo $data["slider_speed"] ?>';
+				slider_speed = parseInt(slider_speed);
+				var transPeriod = '<?php echo $data["slider_duration"] ?>';
+				transPeriod = parseInt(transPeriod);
+				var pagination = '<?php echo $data["pagination"] ?>';
+				var effect = '<?php echo $data["effect"] ?>';
+				if (effect == '') {
+					effect = 'random';
+				}
+				if(pagination == 1){
+					pagination = true;
+				}else{
+					pagination = false;
+				}
+				if(transPeriod < 0){
+					transPeriod == 1500;
+				}
+				if(slider_speed < 0){
+					transPeriod == 3000;
+				}
+				var thumbnail = '<?php echo $data["thumbnail"] ?>';
+				if(thumbnail == 1){
+					thumbnail = true;
+				}else{
+					thumbnail = false;
+				}
+				console.log(camera);
+                jQuery('#camera_wrap_2').camera({
+					height: image_height,
+					loader: 'pie',
+					pagination: pagination,
+					thumbnails: thumbnail,
+					fx: effect,
+					time: slider_speed,
+					transPeriod: transPeriod
+				});
+        	});
+</script>
+<?php endif;?>
+

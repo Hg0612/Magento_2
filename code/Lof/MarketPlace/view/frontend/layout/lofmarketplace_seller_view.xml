@@ -25,7 +25,7 @@
         <referenceContainer name="columns.top">
             <container name="seller.view.container" htmlTag="div" htmlClass="seller-view" after="-">
                 <block class="Lof\MarketPlace\Block\Seller\View" name="seller.vacation" template="Lof_MarketPlace::seller/vacation.phtml"/>
-                <block class="Lof\MarketPlace\Block\Seller\View" name="seller.image" template="Lof_MarketPlace::seller/image.phtml"/>
+                <!-- <block class="Lof\MarketPlace\Block\Seller\View" name="seller.image" template="Lof_MarketPlace::seller/image.phtml"/> -->
             </container>
         </referenceContainer>
         <referenceContainer name="sidebar.main">
