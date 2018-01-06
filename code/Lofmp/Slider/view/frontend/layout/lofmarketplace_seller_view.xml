@@ -28,7 +28,7 @@
 	<body>
         <referenceContainer name="columns.top">
             <container name="seller.view.container" htmlTag="div">
-                <block class="Lofmp\Slider\Block\Seller\Slider" name="seller.slider" template="Lofmp_Slider::seller/slider.phtml"/>
+                <block class="Lofmp\Slider\Block\Seller\Slider" name="seller.slider" ifconfig="lofmpslider/general_settings/enable" template="Lofmp_Slider::seller/slider.phtml"/>
             </container>
         </referenceContainer>
     </body>

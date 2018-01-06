@@ -39,7 +39,7 @@
 				         	<td class=""><?php echo $slider['created_at']; ?>  </td>
 				         	<td class="last text-center">
 				         		<select class="admin__control-select" onchange="Actions(this);" id="action_select">
-				         			<option>Select</option>
+				         			<option value="javascript:void(0)">Select</option>
 									<option action_url="edit" value="<?php echo $block->getUrl('catalog/slider/edit?slider_id='.$slider['slider_id']); ?>">
 										<a href="<?php echo $block->getUrl('catalog/slider/edit?slider_id='.$slider['slider_id']); ?>"><?php echo __('Edit'); ?></a>
 									</option>
