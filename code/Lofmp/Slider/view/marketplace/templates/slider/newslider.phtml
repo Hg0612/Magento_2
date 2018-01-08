@@ -46,8 +46,8 @@ $effect = ['random','simpleFade', 'curtainTopLeft', 'curtainTopRight', 'curtainB
 				</label>
 				<div class="admin__field-control">
 					<select class="admin__control-select" name="image_type" id="post_image_type">	
-						<option value="1"><?php echo __("Upload") ?></option>
-						<option value="2"><?php echo __("URL Link") ?></option>
+						<option value="0"><?php echo __("Upload") ?></option>
+						<option value="1"><?php echo __("URL Link") ?></option>
 					</select>
 				</div>
 			</div>
@@ -74,7 +74,7 @@ $effect = ['random','simpleFade', 'curtainTopLeft', 'curtainTopRight', 'curtainB
 			        <!-- ========. image url .====== -->
 					<div class="row fileupload-buttonbar" id="image_link">
 			            <div class="col-lg-12">
-			                <input type="text" id="image_link_input" name="image_link" placeholder="www.example/image.jpg" class="admin__control-text">
+			                <input type="text" id="image_link_input" name="image_link" placeholder="www.example/image1.jpg" class="admin__control-text">
 			            </div>
 			        </div>
 			        <!-- ========. image url .====== -->
@@ -183,35 +183,37 @@ $effect = ['random','simpleFade', 'curtainTopLeft', 'curtainTopRight', 'curtainB
 </form>
 <script>
 	require(['jquery'], function(){
-		var imagesPreview = function(input, placeToInsertImagePreview) {
-	        if (input.files) {
-	            var filesAmount = input.files.length;
-	            for (i = 0; i < filesAmount; i++) {
-	                var reader = new FileReader();
-	                reader.onload = function(event) {
-	                	jQuery("#list_image").find('tbody')
-						    .append(jQuery('<tr>')
-						        .append(jQuery('<td>')
-						            .append(jQuery('<img>')
-						                .attr('src', event.target.result).attr('class', 'image_show')
-						                .text('Image cell')
-						            )
-						            .append(`
-										<input type="text" value="" class="admin__control-text" name="caption[]" placeholder="Caption photo"/>
-						        		<input type="text" value="" class="admin__control-text" name="url_link[]" placeholder="Link URL"/>
-						            `)
-						        )
-						    )
-	                	}
-	                reader.readAsDataURL(input.files[i]);
-	            }
-	        }
-    	};
+
+		var inputLocalFont = document.getElementById("gallery-photo-add");
+		inputLocalFont.addEventListener("change",previewImages,false);
+
+		function previewImages(){
+		    var fileList = this.files;
+
+		    var anyWindow = window.URL || window.webkitURL;
+
+		        for(var i = 0; i < fileList.length; i++){
+		          var objectUrl = anyWindow.createObjectURL(fileList[i]);
+		          var html = `
+						<tr>
+							<td>
+								<img src="`+ objectUrl +`" class="image_show"/>
+								<input type="text" value="" class="admin__control-text" name="caption[]" placeholder="Caption photo"/>
+				        		<input type="text" value="" class="admin__control-text" name="url_link[]" placeholder="Link URL"/>
+
+							</td>
+						</tr>
+					`;
+                	jQuery("#list_image").find('tbody')
+					    .append(html)
+                	}
+		          window.URL.revokeObjectURL(fileList[i]);
+		        }
     	// -------------------. Use url link
 
     	jQuery("#post_image_type").on("change", function(){
 	        var val = jQuery(this).val();
-	        if(val == "1"){
+	        if(val == "0"){
 	            jQuery("#image_upload").show();
 	            jQuery("#image_link").hide();
 	        }else{
@@ -219,59 +221,36 @@ $effect = ['random','simpleFade', 'curtainTopLeft', 'curtainTopRight', 'curtainB
 	            jQuery("#image_link").show();
 	        }
 	    }).change();
+	    // -------------------. Show image with url
 
-	    //check image
-	    function imageExists(url, callback) {
-		    var img = new Image();
-		    img.onload = function() { callback(true); };
-		    img.onerror = function() { callback(false); };
-		    img.src = url;
-		}
 		jQuery("#image_link_input").focusout(function(){
-	      	var imageUrl = jQuery(this).val();
-	      	imageExists(imageUrl, function(exists) {
-	        	//Show the result
-		        if (imageUrl !== '') {
-		        	if (exists) {
-		        		jQuery("#list_image").find('tbody')
-					    .append(jQuery('<tr>')
-					        .append(jQuery('<td>')
-					            .append(jQuery('<img>')
-					                .attr('src', imageUrl).attr('class', 'image_show')
-					                .text('Image cell')
-					            )
-					            .append(`
+			var img_src = [];
+			var imageUrl = jQuery(this).val().split(' ').join('');
+			if (imageUrl !== "") {
+				imageUrl = imageUrl.split(",");
+		      	imageUrl = imageUrl.filter((v,i) => imageUrl.indexOf(v) == i);
+		      	jQuery(this).val(imageUrl);
+		      	jQuery("#list_image").find('tbody').empty();
+		      	for (var i = 0; i < imageUrl.length; i++) {
+		      		url = imageUrl[i];
+		      		if(url.match(/\.(jpeg|jpg|gif|png)$/) != null){
+					    var html = `
+							<tr>
+								<td>
+									<img src="`+ url +`" class="image_show"/>
 									<input type="text" value="" class="admin__control-text" name="caption[]" placeholder="Caption photo"/>
 					        		<input type="text" value="" class="admin__control-text" name="url_link[]" placeholder="Link URL"/>
-					        		<a id="add_image_link" href="javascript:Void(0)">Add more</a>
-					            `)
-					        )
-					    )
-		        	}else{
-		        		alert("Cannot found image");
-		        	}
-		        }else{
-		        	jQuery("#list_image").find('tbody').empty();
-		        }
-        	})
-	      });
 
-    	// =================================
-
-	    jQuery('#gallery-photo-add').on('change', function() {
-	    	var extension = jQuery(this).val().split('.').pop();
-	    	extension = extension.toLowerCase();
-	    	var names_arr = ['jpg','jpeg','png'];
-	    	if(names_arr.indexOf(extension) != -1){
-	    		jQuery("#list_image").find('tbody').empty();
-	        	imagesPreview(this, '#list_image');
-	    	}else{
-	    		alert("Please select image file");
-	    		jQuery("#list_image").find('tbody').empty();
-	    		jQuery(this).val() = '';
-	    		return false;
-	    	}
+								</td>
+							</tr>
+						`;
+		            	jQuery("#list_image").find('tbody')
+						    .append(html)
+		      		}
+			    }
+			}
 	    });
+
 	    jQuery('#cancel_upload').on('click', function() {
 	    	jQuery("#list_image").find('tbody').empty();
 	        jQuery("#gallery-photo-add").val("");
