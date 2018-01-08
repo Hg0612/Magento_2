@@ -35,6 +35,12 @@ class InstallSchema implements InstallSchemaInterface
             ['nullable' => true],
             'Slider title'
         )->addColumn(
+            'effect',
+            \Magento\Framework\DB\Ddl\Table::TYPE_TEXT,
+            255,
+            ['nullable' => true],
+            'Slider effect'
+        )->addColumn(
             'pagination',
             Table::TYPE_SMALLINT,
             4,
@@ -76,6 +82,12 @@ class InstallSchema implements InstallSchemaInterface
             null,
             ['nullable' => true],
             'seller id'
+        )->addColumn(
+            'image_type',
+            Table::TYPE_SMALLINT,
+            4,
+            ['nullable' => true],
+            'Status'
         )->addColumn(
             'is_active',
             Table::TYPE_SMALLINT,

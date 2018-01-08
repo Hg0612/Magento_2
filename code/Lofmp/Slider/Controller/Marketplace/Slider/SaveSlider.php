@@ -122,28 +122,37 @@ class SaveSlider extends \Magento\Framework\App\Action\Action {
             if ($data) {
                 $model = $objectManager->get('Lofmp\Slider\Model\Slider');
                 try {
-                    if(isset($data['photo']) && $_FILES['file']['name'][0] ==''){
-                        $image = $data['photo'];
-                    }else {
-                        $image = $this->uploadImage('file');
+                    if($data['image_link']){
+                        $image = explode(",", $data['image_link']);
+                    }else{
+                        if(isset($data['photo']) && $_FILES['file']['name'][0] ==''){
+                            $image = $data['photo'];
+                        }else {
+                            $image = $this->uploadImage('file');
+                        }
                     }
+
                     $image_data = [];
                     foreach($image as $key => $val){
                         $image_data[$key] = array(
                             "image_url" => $val,
-                            "caption"   => $data['caption'][$key],
-                            "url_link"  => $data['url_link'][$key]
+                            "caption"   => ($data['caption'][$key])? $data['caption'][$key] : '',
+                            "url_link"  => ($data['url_link'][$key])? $data['url_link'][$key] : ''
                         );
                     }
+
                     $data['image_url'] = json_encode($image_data);
                     unset($data['caption']);
                     unset($data['url_link']);
                     unset($data['status']);
-                    $data['seller_id'] = $this->getRequest()->getParam('seller_id');
+                    unset($data['image_link']);
+
                     $data['created_at'] = date("Y-m-d H:i:s");
                     if (isset($data['slider_id'])) {
                         $model->load($data['slider_id']);
                     }
+                    // echo "<pre>";
+                    // print_r($data);die;
                     $model->setData($data);
                     $model->save();
                     if($data['is_active']){
