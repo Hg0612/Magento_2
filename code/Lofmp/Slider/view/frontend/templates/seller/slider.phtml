@@ -11,16 +11,22 @@ if($data):
 	$height = 100;
 	foreach ($image as $value){
 		$url = $helper->getMediaUrl() . "resized/" . $width . "/" . $value->image_url;
-		if(!UR_exists($url)){
+		if(!UR_exists($url) && !$data['image_type']){
 			$value->thumbnail = $block->resize($value->image_url, $width , $height);
 		}else{
-			$value->thumbnail = $url;
+			if($data['image_type'])
+				$value->thumbnail = $value->image_url;
+			else
+				$value->thumbnail = $url;
 		}
 	}
+	usort($image, function($a, $b) {
+	    return $a->position <=> $b->position;
+	});
 ?>
-<div class="camera_wrap camera_magenta_skin" id="camera_wrap_2">
+<div class="camera_wrap camera_magenta_skin" id="camera_wrap_2" <?php echo ($data['image_width'] != null)? 'style="width: '. $data['image_width'] .'px; margin-left: calc(calc(100% - '. $data['image_width'] .'px)/2)"' : '' ?>>
 	<?php foreach ($image as $value): ?>
-    <div data-thumb="<?php echo isset($value->thumbnail)? $value->thumbnail : '' ?>" data-link="<?php echo $value->url_link; ?>" data-target="_blank" data-src="<?php echo $helper->getMediaUrl() . $value->image_url; ?>">
+    <div data-thumb="<?php echo isset($value->thumbnail)? $value->thumbnail : '' ?>" data-link="<?php echo $value->url_link; ?>" data-target="_blank" data-src="<?php echo (!$data['image_type'])? $helper->getMediaUrl() . $value->image_url : $value->image_url ?>">
         <div class="camera_caption fadeFromBottom">
             <?php echo $value->caption; ?>
         </div>
@@ -46,6 +52,7 @@ if($data):
 				transPeriod = parseInt(transPeriod);
 				var pagination = '<?php echo $data["pagination"] ?>';
 				var effect = '<?php echo $data["effect"] ?>';
+				var image_type = '<?php echo $data["image_type"] ?>';
 				if (effect == '') {
 					effect = 'random';
 				}
@@ -61,12 +68,11 @@ if($data):
 					transPeriod == 3000;
 				}
 				var thumbnail = '<?php echo $data["thumbnail"] ?>';
-				if(thumbnail == 1){
+				if(thumbnail == 1 && image_type == 0 ){
 					thumbnail = true;
 				}else{
 					thumbnail = false;
 				}
-				console.log(camera);
                 jQuery('#camera_wrap_2').camera({
 					height: image_height,
 					loader: 'pie',

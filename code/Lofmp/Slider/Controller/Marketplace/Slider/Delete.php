@@ -76,6 +76,7 @@ class Delete extends \Magento\Customer\Controller\AbstractAccount {
             if(!$model->delete()){
                 $this->messageManager->addNotice(__('Cannot delete this item') );
             }
+            $this->messageManager->addSuccess(__('Delete data success') );
             $this->_redirectUrl ($this->getFrontendUrl('marketplace/catalog/slider'));
         } elseif($customerSession->isLoggedIn() && $status == 0) {
             $this->_redirectUrl ( $this->getFrontendUrl('lofmarketplace/seller/becomeseller') );

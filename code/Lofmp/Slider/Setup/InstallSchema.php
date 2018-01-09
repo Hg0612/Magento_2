@@ -53,6 +53,12 @@ class InstallSchema implements InstallSchemaInterface
             ['nullable' => true],
             'Image height'
         )->addColumn(
+            'image_width',
+            \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
+            null,
+            ['nullable' => true],
+            'Image width'
+        )->addColumn(
             'thumbnail',
             Table::TYPE_SMALLINT,
             4,

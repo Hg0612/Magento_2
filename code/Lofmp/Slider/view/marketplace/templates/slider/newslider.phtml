@@ -93,8 +93,9 @@ $effect = ['random','simpleFade', 'curtainTopLeft', 'curtainTopRight', 'curtainB
 			        			<tr>
 			        				<td>
 			        					<image src="<?php echo (!$current_slider['image_type'])? $helper->getMediaUrl() . $value->image_url : $value->image_url ?>"/>
-			        					<input type="text" id="caption_"<?php echo $key; ?> value="<?php echo $value->caption; ?>" class="admin__control-text validate-no-html-tags" name="caption[]" placeholder="<?php echo __('Caption photo');?>"/>
-						        		<input type="text" id="url_link_"<?php echo $key; ?> value="<?php echo $value->url_link; ?>" class="admin__control-text validate-url" name="url_link[]" placeholder="<?php echo __('Link URL');?>"/>
+			        					<input type="text" value="<?php echo $value->caption; ?>" class="admin__control-text validate-no-html-tags" name="caption[]" placeholder="<?php echo __('Caption photo');?>"/>
+						        		<input type="text" value="<?php echo $value->url_link; ?>" class="admin__control-text validate-url" name="url_link[]" placeholder="<?php echo __('Link URL');?>"/>
+						        		<input type="number" value="<?php echo (isset($value->position))? $value->position : ''; ?>" class="admin__control-text" name="position[]" placeholder="<?php echo __('Image position');?>"/>
 			        				</td>
 			        			</tr>
 							<?php endforeach;?>
@@ -147,6 +148,14 @@ $effect = ['random','simpleFade', 'curtainTopLeft', 'curtainTopRight', 'curtainB
 				</label>
 				<div class="admin__field-control">
 					<input type="text" name="image_height" value="<?php echo isset($current_slider['image_height'])? $current_slider['image_height'] : '' ?>" placeholder="<?php echo __('The height of slider');?>" class="admin__control-text required validate-number" />
+				</div>
+			</div>
+			<div class="admin__field">
+				<label class="admin__field-label">
+					<?php echo __("Image Width (in 'px') :"); ?>
+				</label>
+				<div class="admin__field-control">
+					<input type="text" name="image_width" value="<?php echo isset($current_slider['image_width'])? $current_slider['image_width'] : '' ?>" placeholder="<?php echo __('The with of slider');?>" class="admin__control-text validate-number" />
 				</div>
 			</div>
 
@@ -208,7 +217,7 @@ $effect = ['random','simpleFade', 'curtainTopLeft', 'curtainTopRight', 'curtainB
 								<img src="`+ objectUrl +`" class="image_show"/>
 								<input type="text" value="" class="admin__control-text" name="caption[]" placeholder="Caption photo"/>
 				        		<input type="text" value="" class="admin__control-text" name="url_link[]" placeholder="Link URL"/>
-
+				        		<input type="number" value="" class="admin__control-text" name="position[]" placeholder="Image position"/>
 							</td>
 						</tr>
 					`;
@@ -249,6 +258,7 @@ $effect = ['random','simpleFade', 'curtainTopLeft', 'curtainTopRight', 'curtainB
 									<img src="`+ url +`" class="image_show"/>
 									<input type="text" value="" class="admin__control-text" name="caption[]" placeholder="Caption photo"/>
 					        		<input type="text" value="" class="admin__control-text" name="url_link[]" placeholder="Link URL"/>
+					        		<input type="number" value="" class="admin__control-text" name="position[]" placeholder="Image position"/>
 								</td>
 							</tr>
 						`;

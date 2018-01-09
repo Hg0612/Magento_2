@@ -26,48 +26,25 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Filesystem\DirectoryList;
 
 class SaveSlider extends \Magento\Framework\App\Action\Action {
-    /**
-     *
-     * @var Magento\Framework\App\Action\Session
-     */
+
     protected $session;
 
-    /**
-     *
-     * @var Magento\Framework\View\Result\PageFactory
-     */
     protected $resultPageFactory;
-    /**
-     *
-     * @var \Lof\MarketPlace\Model\SellerFactory 
-     */
 
     protected $sellerFactory;
-    /**
-     * @var \Magento\Framework\Filesystem
-     */
+
     protected $_fileSystem;
 
     const FLAG_IS_URLS_CHECKED = 'check_url_settings';
 
     protected $_frontendUrl;
 
-    /**
-     * @var \Magento\Framework\App\ActionFlag
-     */
     protected $_actionFlag;
 
     protected $_mediaDirectory;
-    protected $_fileUploaderFactory;
-    //-------------------. thumnail image
-    protected $_storeManager;
 
-    /**
-     *
-     * @param Context $context
-     * @param Magento\Framework\App\Action\Session $customerSession
-     * @param PageFactory $resultPageFactory
-     */
+    protected $_fileUploaderFactory;
+
     public function __construct(
         Context $context, 
         \Magento\Customer\Model\Session $customerSession, 
@@ -88,28 +65,19 @@ class SaveSlider extends \Magento\Framework\App\Action\Action {
         $this->resultPageFactory = $resultPageFactory;
         $this->_frontendUrl      = $frontendUrl;
         $this->_actionFlag       = $context->getActionFlag();
-        $this->_storeManager = $storeManager;
 
     }
 
     public function getFrontendUrl($route = '', $params = []){
         return $this->_frontendUrl->getUrl($route,$params);
     }
-    /**
-     * Redirect to URL
-     * @param string $url
-     * @return \Magento\Framework\App\ResponseInterface
-     */
+
     protected function _redirectUrl($url){
         $this->getResponse()->setRedirect($url);
         $this->session->setIsUrlNotice($this->_actionFlag->get('', self::FLAG_IS_URLS_CHECKED));
         return $this->getResponse();
     }
-    /**
-     * Customer login form page
-     *
-     * @return \Magento\Framework\Controller\Result\Redirect|\Magento\Framework\View\Result\Page
-     */
+
     public function execute() {
         $customerSession = $this->session;
         $customerId = $customerSession->getId();
@@ -137,7 +105,8 @@ class SaveSlider extends \Magento\Framework\App\Action\Action {
                         $image_data[$key] = array(
                             "image_url" => $val,
                             "caption"   => ($data['caption'][$key])? $data['caption'][$key] : '',
-                            "url_link"  => ($data['url_link'][$key])? $data['url_link'][$key] : ''
+                            "url_link"  => ($data['url_link'][$key])? $data['url_link'][$key] : '',
+                            "position"  => ($data['position'][$key])? $data['position'][$key] : $key,
                         );
                     }
 
@@ -151,10 +120,9 @@ class SaveSlider extends \Magento\Framework\App\Action\Action {
                     if (isset($data['slider_id'])) {
                         $model->load($data['slider_id']);
                     }
-                    // echo "<pre>";
-                    // print_r($data);die;
                     $model->setData($data);
                     $model->save();
+                    $this->messageManager->addSuccess(__('Update data success') );
                     if($data['is_active']){
                         $model->updateStatus($model->getId());
                     }
