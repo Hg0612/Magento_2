@@ -1,0 +1,378 @@
+<?php
+    $product           = $block->getProduct();
+    $collection        = $block->_collection;
+    $categories        = $block->getCategories();
+    $gridColumn        = $block->_sellerSettings->getGridColumn();
+    $answerSlide       = $block->_sellerSettings->getAnswerSlide();
+    $answerListSlide   = $block->_sellerSettings->getAnswerListSlide();
+    $isEnablePopupForm = $block->_sellerSettings->isEnablePopupForm();
+    $isEnableRecaptcha = $block->_sellerSettings->isEnableRecaptcha();
+    $adminEnableRecaptcha = $block->getConfig('general_settings/enable_recaptcha');
+    $reCaptchaSiteKey  = $block->getConfig('recaptcha_settings/site_key');
+    $layout            = $this->_sellerSettings['layout'];
+
+?>
+<?php if($isEnablePopupForm){ ?>
+<div class="row">
+    <a style="margin-bottom: 5px" href="javascript:void(0);" class="mpfaq-btnfancy"><?php echo __('Ask a Question') ?></a>
+    <div id="mpfaq-poquestion" class="popquestion" style="display: none">
+        <div class="ask-question-form">
+            <div class="mpfaqform-loading"></div>
+            <form action="#" id="mpfaqform" name="popup-ask-question-form" method="post" data-mage-init='{"validation":{}}'>
+                <input name="product_id" value="<?php echo $product->getId() ?>" type="hidden">
+                <div class="fieldset">
+                    <h2 class="legend"><?php echo __('Ask a Question'); ?><a class="btn-slide" id="fme-faq-btn-slide-close" href="javascript:" style="display: none; float:right;"></a>
+                    </h2>
+                    <ul class="form-list">
+                        <li class="fields">
+                            <div class="field">
+                                <label for="customer_name" class="required"><?php echo __('Name'); ?><em>*</em></label>
+                                <div class="input-box">
+                                    <input name="customer_name" id="customer_name" title="Customer Name " value="" class="required-entry input-text" type="text">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="customer_email" class="required"><?php echo __('Email'); ?><em>*</em></label>
+                                <div class="input-box">
+                                    <input name="customer_email" id="customer_email" title="<?php echo __('Email'); ?>" value="" class="required-entry validate-email input-text" type="text">
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label for="categories" class="required"><?php echo __('Category'); ?><em>*</em></label>
+                                <div class="input-box">
+                                    <select name="category_id" id="category_id" class="required-entry input-select">
+                                        <?php foreach ($categories as $category) { ?>
+                                            <option value="<?php echo $category->getId() ?>"><?php echo $category->getTitle() ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="wide">
+                            <label for="title" class="required"><?php echo __('Question'); ?><em>*</em></label>
+                            <div class="input-box">
+                                <textarea name="title" id="title" title="<?php echo __('Question'); ?>" class="required-entry input-text" rows="5"></textarea>
+                            </div>
+                        </li>
+                        <?php if($adminEnableRecaptcha && $isEnableRecaptcha && $reCaptchaSiteKey!=''){ ?>
+                            <li class="wide">
+                                <div class="field col-sm-12"><div class="g-recaptcha" data-sitekey="<?php echo $reCaptchaSiteKey ?>" data-callback="enableSubmitButton"></div></div>
+                            </li>
+                        <?php } ?>
+                    </ul>
+                    <button  style="float: right;" type="submit" id="submit-button" class="button" <?php if($isEnableRecaptcha) echo 'disabled' ?> ><span><span><?php echo __('Submit'); ?></span></span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<?php } ?>
+
+<div class="lof-mpfaq">
+    <div id="mpfaqpage" class="faq-<?php echo $layout ?>">
+        <?php if($layout == '1-column'){
+            $gridStyle = "col-lg-$gridColumn col-md-$gridColumn col-sm-$gridColumn col-xs-$gridColumn";
+            $count = 0;
+            foreach($collection as $item){
+
+                $category = $item['category'];
+                $questions = $item['questions'];
+                $count++;
+
+                $categoryId              = $category->getId();
+                $categoryTitle           = $category->getTitle();
+                $categoryTitleSize       = $category->getTitleSize();
+                $categoryTitleColor      = $category->getTitleColor();
+                $categoryTitleBackground = $category->getTitleBackground();
+                $categoryBorderWidth     = $category->getBorderWidth();
+                $categoryBorderColor     = $category->getBorderColor();
+                $categoryBorderRadius    = $category->getBorderRadius();
+                $categoryMarginBottom    = $category->getMarginBottom();
+                $categoryMarginLeft      = $category->getMarginLeft();
+                $categoryIcon            = $category->getIcon();
+
+                $categoryTitleFontStyle = "font-size: " . $categoryTitleSize . "px;" .
+                                          "color: "     . $categoryTitleColor;
+
+                $categoryTitleStyle = "border-style: solid;" .
+                                      "border-color:"      . $categoryBorderColor . ";" .
+                                      "border-width: "     . $categoryBorderWidth . "px;" .
+                                      "border-radius: "    . $categoryBorderRadius . "px;" .
+                                      "margin-bottom: "    . $categoryMarginBottom . "px;" .
+                                      "margin-left: "      . $categoryMarginLeft . "px;" .
+                                      "background-color: " . $categoryTitleBackground;
+        ?>
+
+        <div class="row">
+            <div class="<?php echo $gridStyle ?>">
+                <div class="panel">
+                    <div id="category-<?php echo $count ?>" class="category" style="<?php echo $categoryTitleStyle ?>">
+                            <i class="<?php echo $categoryIcon ?>" style="<?php echo $categoryTitleFontStyle ?>" aria-hidden="true"></i>
+                            <span style="<?php echo $categoryTitleFontStyle ?>"> <?php echo $categoryTitle ?> </span>
+                    </div>
+                    <div class="questions-container" id="questions-container-<?php echo $count ?>">
+                        <ul style="display: none" id="question-list-<?php echo $count ?>" class="question-list">
+                            <?php foreach($questions as $question){
+                                $questionId           = $question->getId();
+                                $questionTitle        = $question->getTitle();
+                                $questionSize         = $question->getTitleSize();
+                                $questionColor        = $question->getTitleColor();
+                                $questionBackground   = $question->getTitleBackground();
+                                $questionBorderWidth  = $question->getBorderWidth();
+                                $questionBorderColor  = $question->getBorderColor();
+                                $questionBorderRadius = $question->getBorderRadius();
+                                $questionMarginLeft   = $question->getMarginLeft();
+                                $questionMarginBottom = $question->getMarginBottom();
+                                $bodyColor            = $question->getBodyColor();
+                                $bodyBackground       = $question->getBodyBackground();
+
+                                $questionFontStyle  = "font-size: " . $questionSize . "px;" .
+                                                     "color: " . $questionColor;
+                                $questionTitleStyle = "background-color: " . $questionBackground;
+
+                                $questionContainerStyle     = "border-style: solid;" .
+                                                              "border-color:"   . $questionBorderColor  . ";"   .
+                                                              "border-width: "  . $questionBorderWidth  . "px;" .
+                                                              "border-radius: " . $questionBorderRadius . "px;" .
+                                                              "margin-left: "   . $questionMarginLeft . "px;"   .
+                                                              "margin-bottom: " . $questionMarginBottom . "px;";
+
+
+                                $bodyFontStyle = "color: " . $bodyColor;
+                                $bodyStyle = "background-color: " . $bodyBackground . ";" .
+                                             "display:none";
+                            ?>
+                            <li class="question-item" id="question-<?php echo $questionId ?>" style="<?php echo $questionContainerStyle ?>">
+                                <div class="question" id="question-title-<?php echo $questionId ?>" style="<?php echo $questionTitleStyle ?>">
+                                    <span><i class="<?php echo $question->getIcon() ?>" aria-hidden="true" style="<?php echo $questionFontStyle ?>"></i></span>
+                                    <span data-toggle="collapse" data-parent="#category-<?php echo $count ?>" href="#" class="collapsed" style="<?php echo $questionFontStyle ?>"><?php echo $questionTitle ?></span>
+                                </div>
+                                <div class="answer" id="question-answer-<?php echo $questionId ?>" style="<?php echo $bodyStyle ?>">
+                                    <span data-toggle="collapse" data-parent="#category-<?php echo $count ?>" href="#" class="collapsed" style="<?php echo $bodyFontStyle ?>"><?php echo $question->getAnswer() ?></span>
+                                </div>
+    <!--                            <div class="question-meta---><?php //echo $questionId ?><!--">-->
+    <!--                                <a data-toggle="collapse" data-parent="#category---><?php //echo $count ?><!--" href="#question--><?php //echo $_question->getId() ?><!-----><?php //echo $blockId ?><!--" class="collapsed">-->
+    <!--                            </div>-->
+                            </li>
+                            <?php } ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+            require(['jquery', 'faq'], function($, faq){
+                jQuery(document).ready(function($) {
+                    $("#category-<?php echo $count ?>").click(function(){
+                        $('.answer').slideUp('<?php echo $answerSlide ?>');
+
+                        var questionListElement = $('#question-list-<?php echo $count ?>');
+                        if(questionListElement.css('display') === 'none'){
+                            $('.question-list').not(questionListElement).slideToggle('<?php echo $answerListSlide ?>');
+                            $('.question-list').not(questionListElement).css('display', 'none');
+                            questionListElement.slideToggle('<?php echo $answerListSlide ?>')
+                        } else {
+                            questionListElement.css('display', 'none');
+                        }
+                    });
+                });
+
+
+            });
+        </script>
+        <?php } } ?>
+
+
+        <?php if($layout == '1-column-leftbar'){
+            $gridStyle = "col-lg-$gridColumn col-md-$gridColumn col-sm-$gridColumn col-xs-$gridColumn";
+        ?>
+        <div class="">
+            <div class="category-tab" style="float: left; width: 20%">
+                <?php
+                $count = 0;
+                foreach ($collection as $item){
+                    $count++;
+                    $category = $item['category'];
+                    $categoryId              = $category->getId();
+                    $categoryTitle           = $category->getTitle();
+                    $categoryTitleSize       = $category->getTitleSize();
+                    $categoryTitleColor      = $category->getTitleColor();
+                    $categoryTitleBackground = $category->getTitleBackground();
+                    $categoryBorderWidth     = $category->getBorderWidth();
+                    $categoryBorderColor     = $category->getBorderColor();
+                    $categoryBorderRadius    = $category->getBorderRadius();
+                    $categoryMarginBottom    = $category->getMarginBottom();
+                    $categoryMarginLeft      = $category->getMarginLeft();
+                    $categoryIcon            = $category->getIcon();
+                    $categoryIconActive      = $category->getIconActive();
+                    $animationClass          = $category->getAnimationClass();
+
+                    $categoryTitleFontStyle = "font-size: " . $categoryTitleSize . "px;" .
+                        "color: "     . $categoryTitleColor;
+
+                    $categoryTitleStyle = "border-style: solid;" .
+                        "border-color:"      . $categoryBorderColor . ";" .
+                        "border-width: "     . $categoryBorderWidth . "px;" .
+                        "border-radius: "    . $categoryBorderRadius . "px;" .
+                        "margin-bottom: "    . $categoryMarginBottom . "px;" .
+                        "margin-left: "      . $categoryMarginLeft . "px;" .
+                        "background-color: " . $categoryTitleBackground;
+                    ?>
+
+                    <div id="category-<?php echo $count ?>" class="category" style="<?php echo $categoryTitleStyle ?>">
+                        <i class="<?php echo $categoryIcon ?>" style="<?php echo $categoryTitleFontStyle ?>" aria-hidden="true"></i>
+                        <span style="<?php echo $categoryTitleFontStyle ?>"> <?php echo $categoryTitle ?> </span>
+                    </div>
+                    <script type="text/javascript">
+                        require(['jquery', 'faq'], function($, faq){
+                            jQuery(document).ready(function($) {
+                                $("#category-<?php echo $count ?>").click(function(){
+                                    $('.answer').slideUp('<?php echo $answerSlide ?>');
+
+                                    var questionListElement = $('#question-list-<?php echo $count ?>');
+                                    if(questionListElement.css('display') === 'none'){
+                                        $('.question-list').not(questionListElement).css('display', 'none');
+                                        questionListElement.slideToggle('<?php echo $answerListSlide ?>')
+                                    } else {
+                                        questionListElement.slideToggle('<?php echo $answerListSlide ?>')
+                                    }
+                                });
+                            });
+
+
+                        });
+                    </script>
+
+                <?php } ?>
+            </div>
+            <div style="float:left; width: 80%">
+                <div class="row">
+                    <div class="questions-container <?php echo $gridStyle ?>">
+                        <?php
+
+                        $count = 0;
+                        foreach ($collection as $item){
+                            $questions = $item['questions'];
+                            $count++;
+
+                            ?>
+                            <ul id="question-list-<?php echo $count ?>" style="display: none" class="question-list">
+                                <?php foreach($questions as $question){
+                                    $questionId           = $question->getId();
+                                    $questionTitle        = $question->getTitle();
+                                    $questionSize         = $question->getTitleSize();
+                                    $questionColor        = $question->getTitleColor();
+                                    $questionBackground   = $question->getTitleBackground();
+                                    $questionBorderWidth  = $question->getBorderWidth();
+                                    $questionBorderColor  = $question->getBorderColor();
+                                    $questionBorderRadius = $question->getBorderRadius();
+                                    $questionMarginLeft   = $question->getMarginLeft();
+                                    $questionMarginBottom = $question->getMarginBottom();
+                                    $bodyColor            = $question->getBodyColor();
+                                    $bodyBackground       = $question->getBodyBackground();
+
+                                    $questionFontStyle  = "font-size: " . $questionSize . "px;" .
+                                        "color: " . $questionColor;
+                                    $questionTitleStyle = "background-color: " . $questionBackground;
+
+                                    $questionContainerStyle     = "border-style: solid;" .
+                                        "border-color:"   . $questionBorderColor  . ";"   .
+                                        "border-width: "  . $questionBorderWidth  . "px;" .
+                                        "border-radius: " . $questionBorderRadius . "px;" .
+                                        "margin-left: "   . $questionMarginLeft . "px;"   .
+                                        "margin-bottom: " . $questionMarginBottom . "px;";
+
+
+                                    $bodyFontStyle = "color: " . $bodyColor;
+                                    $bodyStyle = "background-color: " . $bodyBackground . ";" .
+                                        "display:none";
+                                    ?>
+                                    <li class="question-item" id="question-<?php echo $questionId ?>" style="<?php echo $questionContainerStyle ?>">
+                                        <div class="question" id="question-title-<?php echo $questionId ?>" style="<?php echo $questionTitleStyle ?>">
+                                            <span><i class="<?php echo $question->getIcon() ?>" aria-hidden="true" style="<?php echo $questionFontStyle ?>"></i></span>
+                                            <span data-toggle="collapse" data-parent="#category-<?php echo $count ?>" href="#" class="collapsed" style="<?php echo $questionFontStyle ?>"><?php echo $questionTitle ?></span>
+                                        </div>
+                                        <div class="answer" id="question-answer-<?php echo $questionId ?>" style="<?php echo $bodyStyle ?>">
+                                            <span data-toggle="collapse" data-parent="#category-<?php echo $count ?>" href="#" class="collapsed" style="<?php echo $bodyFontStyle ?>"><?php echo $question->getAnswer() ?></span>
+                                        </div>
+                                        <!--                            <div class="question-meta---><?php //echo $questionId ?><!--">-->
+                                        <!--                                <a data-toggle="collapse" data-parent="#category---><?php //echo $count ?><!--" href="#question--><?php //echo $_question->getId() ?><!-----><?php //echo $blockId ?><!--" class="collapsed">-->
+                                        <!--                            </div>-->
+                                    </li>
+                                <?php } ?>
+                            </ul>
+                        <?php } ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php } ?>
+    </div>
+</div>
+
+<script src='https://www.google.com/recaptcha/api.js'></script>
+
+<script type="text/javascript">
+    var enableSubmitButton = function(){
+        document.getElementById("submit-button").disabled = false;
+    }
+</script>
+
+<script type="text/javascript">
+    require([
+        'faq'
+    ], function(faq){
+        jQuery(document).ready(function($) {
+            $('.question').click(function(){
+                var questionId = this.id;
+                faq.showAnswer(questionId, '<?php echo $answerSlide ?>');
+            })
+        });
+    });
+</script>
+<script type="text/javascript">
+    require([
+        'jquery',
+        'faq',
+        'Lof_All/lib/fancybox/jquery.fancybox.pack',
+        'mage/validation'
+    ], function($){
+        jQuery(document).ready(function($) {
+            jQuery(".mpfaq-btnfancy").fancybox({
+                'href'   : '#mpfaq-poquestion',
+                'titleShow'  : false,
+                'transitionIn'  : 'elastic',
+                'transitionOut' : 'elastic',
+                'minWidth'  : 600,
+            });
+        });
+    });
+</script>
+<script type="text/javascript">
+    require([
+        'jquery',
+        'Lof_All/lib/fancybox/jquery.fancybox.pack'
+    ],function() {
+        jQuery('#mpfaqform').submit(function(e){
+            e.preventDefault();
+            if(jQuery(this).validation('isValid') == true) {
+                jQuery('.mpfaqform-loading').addClass('ajax-loading');
+                ajaxurl  =  '<?php echo $this->getUrl('lofmpfaq/question/save', ["_secure" => $this->getRequest()->isSecure()]); ?>';
+                jQuery.ajax({
+                    url: ajaxurl,
+                    type:'POST',
+                    dataType: 'json',
+                    data: new FormData(this), // Data sent to server, a set of key/value pairs (i.e. form fields and values)
+                    contentType: false,       // The content type used when sending data to the server.
+                    cache: false,             // To unable request pages to be cached
+                    processData:false,        // To send DOMDocument or non processed data file it is set to false
+                    success: function(data) {
+                        jQuery('#mpfaqform')[0].reset();
+                        jQuery('.mpfaqform-loading').removeClass('ajax-loading');
+                        parent.jQuery.fancybox.close();
+                    }
+                });
+            }
+        });
+    });
+</script>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © 2015 Magento. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+    	<add id="Lof_MpFaq::faq" icon="fa fa-question-circle" title="FAQ" module="Lof_MpFaq" sortOrder="50" resource="Lof_MpFaq::faq"/>
+    	<add id="Lof_MpFaq::manager_category" title="Manager Category" module="Lof_MpFaq" action="catalog/faqcategory/index" sortOrder="51" parent="Lof_MpFaq::faq" resource="Lof_MpFaq::manager_category"/>
+    	<add id="Lof_MpFaq::new_category" title="New Category" module="Lof_MpFaq"  action="catalog/faqcategory/new" sortOrder="52" parent="Lof_MpFaq::faq" resource="Lof_MpFaq::new_category"/>
+    	<add id="Lof_MpFaq::manager_question" title="Manager Question" module="Lof_MpFaq"  action="catalog/faqquestion/index" sortOrder="53" parent="Lof_MpFaq::faq" resource="Lof_MpFaq::manager_question"/>
+    	<add id="Lof_MpFaq::new_question" title="New Question" module="Lof_MpFaq"  action="catalog/faqquestion/new" sortOrder="54" parent="Lof_MpFaq::faq" resource="Lof_MpFaq::new_question"/>
+    	<add id="Lof_MpFaq::setting" title="Setting" module="Lof_MpFaq"  action="catalog/faqsetting/index" sortOrder="55" parent="Lof_MpFaq::faq" resource="Lof_MpFaq::setting"/>
+    </menu>
+</config>

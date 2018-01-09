@@ -1,0 +1,7 @@
+{
+  "name": "lof/module-mpfaq",
+  "autoload": {
+    "files": [ "registration.php" ],
+    "psr-4": { "Lof\\mpfaq\\": "" }
+  }
+}
