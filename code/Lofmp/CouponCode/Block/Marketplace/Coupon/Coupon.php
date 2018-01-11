@@ -23,88 +23,56 @@ namespace Lofmp\CouponCode\Block\Marketplace\Coupon;
 
 class Coupon extends \Magento\Framework\View\Element\Template {
 
-    /**
-     * Core registry
-     *
-     * @var \Magento\Framework\Registry
-     */
     protected $_coreRegistry = null;
-    /**
-     * @var \Lofmp\Slider\Model\Slider
-     */
-    protected $_SliderFactory;
-    /**
-     * @var \Lofmp\Slider\Model\Data
-     */
-    protected $_helper;
-     /**
-     * @var \Lofmp\Slider\Model\Slider
-     */
-    protected $slider;
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
-     */
+
+    protected $_couponFactory;
+
+    protected $_sellerhelper;
+
+    protected $coupon;
+
     protected $_resource;
-    /**
-     * @param \Magento\Framework\View\Element\Template\Context
-     * @param \Magento\Framework\Registry
-     * @param \Lofmp\Slider\Model\Slider
-     * @param \Magento\Framework\App\ResourceConnection
-     * @param array
-    */
+
+    protected $_rule;
+
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Registry $registry,
-        \Lofmp\Slider\Model\Slider $SliderFactory,
-        \Lof\MarketPlace\Helper\Data $helper,
-        \Lofmp\Slider\Model\Slider $slider,
+        \Lofmp\CouponCode\Model\Coupon $CouponFactory,
+        \Lof\MarketPlace\Helper\Data $seller_helper,
+        \Lofmp\CouponCode\Model\Coupon $coupon,
+        \Lofmp\CouponCode\Model\Rule $rule,
         \Magento\Customer\Model\Session $customerSession,
         \Magento\Framework\App\ResourceConnection $resource,
         array $data = []
         ) {
-        $this->slider = $slider;
-        $this->_helper        = $helper;
+        $this->coupon         = $coupon;
+        $this->_rule          = $rule;
+        $this->_sellerhelper  = $seller_helper;
         $this->_coreRegistry  = $registry;
-        $this->_SliderFactory = $SliderFactory;
+        $this->_couponFactory = $CouponFactory;
         $this->_resource      = $resource;
-        $this->session           = $customerSession;
+        $this->session        = $customerSession;
         parent::__construct($context);
     }
-    /**
-     *  get Slider Colection
-     *
-     * @return Object
-     */
-     public function getSliderCollection(){
+
+    public function getCouponCollection(){
         $store            = $this->_storeManager->getStore();
-        $SliderCollection = $this->_SliderFactory->getCollection();
-        return $SliderCollection;
+        $CouponCollection = $this->_couponFactory->getCollection();
+        return $CouponCollection;
     }
 
-    public function getSlider() {
-        if($this->getCurrentSlider()) {
-            $slider_id = $this->getCurrentSlider()->getData('slider_id');
+    public function getCouponCode() {
+
+        if($this->getCurrentCoupon()) {
+            $coupon_id = $this->getCurrentCoupon()->getData('coupon_id');
         } else {
-            $slider_id = $this->getSliderId();
+            $coupon_id = $this->getCouponId();
         }
-        $slider = $this->slider->getCollection()->addFieldToFilter('seller_id',$this->_helper->getSellerId());
-        return $slider;
+        $coupon = $this->coupon->getCollection()->getCouponCodeByConditions(["seller_id" => $this->_sellerhelper->getSellerId()]);
+        return $coupon;
     }
 
-    public function getCurrentSlider()
-    {
-        $Slider = $this->_coreRegistry->registry('current_Slider');
-        if ($Slider) {
-            $this->setData('current_Slider', $Slider);
-        }
-        return $Slider;
-    }
-
-    /**
-     * Prepare layout for change buyer
-     *
-     * @return Object
-     */
     public function _prepareLayout() {
         return parent::_prepareLayout ();
     }

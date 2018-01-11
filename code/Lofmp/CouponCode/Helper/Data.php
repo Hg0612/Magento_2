@@ -142,7 +142,6 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $html;
     }
     public function getCouponRuleData($ruleId){
-        // var_dump(get_class_methods());die;
         if(!isset($this->_coupon_rule_model[$ruleId])) {
             $model = $this->_objectManager->create('Lofmp\CouponCode\Model\Rule');
             if(is_numeric($ruleId)) {
@@ -196,7 +195,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
                 );
         $param = array();
         foreach ($collection as $rule ) {
-            $param[$rule['coupon_rule_id']] = $rule['name'];
+            $param[$rule['rule_id']] = $rule['name'];
         }
         return $param;
     }

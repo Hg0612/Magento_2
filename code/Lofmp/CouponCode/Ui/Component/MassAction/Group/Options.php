@@ -113,6 +113,7 @@ class Options implements JsonSerializable
                 'left'
                 ); 
             $this->prepareData();
+
             if(count($options->getData())){
             foreach ($options->getData() as $optionCode) {
                 $this->options[$optionCode['coupon_rule_id']] = [
@@ -124,7 +125,7 @@ class Options implements JsonSerializable
                 if ($this->urlPath && $this->paramName) {
                     $this->options[$optionCode['coupon_rule_id']]['url'] = $this->urlBuilder->getUrl(
                         $this->urlPath,
-                        [$this->paramName => $optionCode['coupon_rule_id']]
+                        [$this->paramName => $optionCode['rule_id']]
                     );
                 }
 
@@ -135,8 +136,6 @@ class Options implements JsonSerializable
             }
             $this->options = array_values($this->options);
             }
-            
-
         }
 
         return $this->options;

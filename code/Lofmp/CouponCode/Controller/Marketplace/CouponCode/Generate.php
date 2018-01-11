@@ -109,12 +109,12 @@ class Generate extends \Magento\Customer\Controller\AbstractAccount {
                     if(!$coupon_exists){
                         $coupon_code = $this->couponGenerator->generateCoupon($rule_id);
                         $this->messageManager->addSuccess(__('The coupon code has been generated.'));
-                        $this->_redirect ('catalog/couponcode' );
                     }
                 }
             }
+        }else{
+            $this->messageManager->addError(__('Something went wrong while saving the coupon.'));
         }
-        $this->messageManager->addError(__('Something went wrong while saving the coupon.'));
         $this->_redirect ('catalog/couponcode' );
     }
 }

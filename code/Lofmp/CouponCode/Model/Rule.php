@@ -114,8 +114,8 @@ class Rule extends \Magento\Rule\Model\AbstractModel
     public function getAllRule(){
         $collection = $this->getCollection();
         $param = array();
-        foreach ($collection->getData() as $rule ) {                
-            $param[$rule['rule_id']] = $rule['name'];            
+        foreach ($collection->getData() as $rule ) {
+            $param[$rule['rule_id']] = $rule['name'];
         }
         return $param;        
     }

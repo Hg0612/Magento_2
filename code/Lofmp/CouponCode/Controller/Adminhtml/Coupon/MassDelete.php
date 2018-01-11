@@ -37,10 +37,10 @@ class MassDelete extends \Lofmp\CouponCode\Controller\Adminhtml\Coupon
     protected $collectionFactory;
 
     /**
-     * @param \Magento\Backend\App\Action\Context                             $context           
-     * @param \Magento\Ui\Component\MassAction\Filter                         $filter            
-     * @param \Lofmp\CouponCode\Model\ResourceModel\Coupon\CollectionFactory    $collectionFactory 
-     * @param  \Magento\Framework\Registry                                    $coreRegistry      
+     * @param \Magento\Backend\App\Action\Context                             $context
+     * @param \Magento\Ui\Component\MassAction\Filter                         $filter
+     * @param \Lofmp\CouponCode\Model\ResourceModel\Coupon\CollectionFactory    $collectionFactory
+     * @param  \Magento\Framework\Registry                                    $coreRegistry
      */
     public function __construct(
         \Magento\Backend\App\Action\Context $context,
@@ -48,7 +48,7 @@ class MassDelete extends \Lofmp\CouponCode\Controller\Adminhtml\Coupon
         \Lofmp\CouponCode\Model\ResourceModel\Coupon\CollectionFactory $collectionFactory,
         \Magento\Framework\Registry $coreRegistry
     ) {
-         parent::__construct($context, $coreRegistry);
+        parent::__construct($context, $coreRegistry);
         $this->filter             = $filter;
         $this->collectionFactory  = $collectionFactory;
     }
