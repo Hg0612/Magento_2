@@ -93,7 +93,7 @@ class SaveSlider extends \Magento\Framework\App\Action\Action {
                     if($data['image_link']){
                         $image = explode(",", $data['image_link']);
                     }else{
-                        if(isset($data['photo']) && $_FILES['file']['name'][0] ==''){
+                        if(isset($data['photo']) && $_FILES['file']['name'][0] =='' ){
                             $image = $data['photo'];
                         }else {
                             $image = $this->uploadImage('file');
@@ -111,10 +111,12 @@ class SaveSlider extends \Magento\Framework\App\Action\Action {
                     }
 
                     $data['image_url'] = json_encode($image_data);
+
                     unset($data['caption']);
                     unset($data['url_link']);
                     unset($data['status']);
                     unset($data['image_link']);
+                    unset($data['photo']);
 
                     $data['created_at'] = date("Y-m-d H:i:s");
                     if (isset($data['slider_id'])) {

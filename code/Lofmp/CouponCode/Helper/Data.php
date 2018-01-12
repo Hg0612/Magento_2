@@ -213,5 +213,16 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         return $base_url.$route;
     }
 
+    public function DiscountAmountFormat($couponRuleId, $discount_amount){
+        $couponRuleData = $this->getCouponRuleData($couponRuleId);
+        $simple_action = $couponRuleData->getSimpleAction();
+        $discount_amount = number_format((float)$discount_amount, 2, '.', '');
+        if($simple_action == 'by_percent') {
+            $discount_amount .='%';
+        }elseif($simple_action == 'by_fixed'){
+            $discount_amount .= $this->_storeManager->getStore()->getCurrentCurrency()->getCode();
+        }
+        return $discount_amount;
+    }
 
 }

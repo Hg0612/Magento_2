@@ -9,6 +9,6 @@
     <menu>
     	<add id="Lofmp_CouponCode::coupon" icon="fa fa-gift" title="Coupons" module="Lofmp_CouponCode" sortOrder="50" resource="Lofmp_CouponCode::coupon"/>
     	<add id="Lofmp_CouponCode::manager_coupon" title="Manager Coupon" module="Lofmp_CouponCode" action="catalog/couponcode/index" sortOrder="51" parent="Lofmp_CouponCode::coupon" resource="Lofmp_CouponCode::manager_coupon"/>
-    	<add id="Lofmp_CouponCode::add_coupon" title="Add Coupon" module="Lofmp_CouponCode" action="catalog/coupon/new" sortOrder="51" parent="Lofmp_CouponCode::coupon" resource="Lofmp_CouponCode::manager_coupon"/>
+    	<add id="Lofmp_CouponCode::rule" title="Manager Rule" module="Lofmp_CouponCode" action="catalog/rule/index" sortOrder="51" parent="Lofmp_CouponCode::coupon" resource="Lofmp_CouponCode::manager_coupon"/>
     </menu>
 </config>

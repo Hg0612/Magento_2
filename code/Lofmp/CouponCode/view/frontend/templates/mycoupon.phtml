@@ -1,5 +1,7 @@
-<?php  $_gridrecords = $block->getCollection();?>
-<?php if ($_gridrecords && count($_gridrecords)): ?>
+<?php  $_gridrecords = $block->getCollection();
+$data = $_gridrecords->getData();
+$coupon_helper = $this->helper("Lofmp\CouponCode\Helper\Data");
+if (count($data) > 0): ?>
     <div class="table-wrapper orders-history">
         <table class="data table table-order-items history" id="my-orders-table">
             <caption class="table-caption"><?php echo __('Grid Record') ?></caption>
@@ -8,16 +10,22 @@
                     <th scope="col" class="col id"><?php echo __('#') ?></th>
                     <th scope="col" class="col title"><?php echo __('Code') ?></th>
                     <th scope="col" class="col date"><?php echo __('Email') ?></th>
+                    <th scope="col" class="col date"><?php echo __('Discount Amount') ?></th>
+                    <th scope="col" class="col date"><?php echo __('Expires At') ?></th>
                 </tr>
             </thead>
             <tbody>
                 <?php
                     $no = 1;
-                    foreach ($_gridrecords as $_gridrecord): ?>
+                    foreach ($data as $val):
+                    $rule_data = $_gridrecords->getRule($val["rule_id"]);
+                ?>
                     <tr>
                         <td class="col id"><?php echo $no ?></td>
-                        <td class="col shipping"><?php echo $_gridrecord->getCode() ?></td>
-                        <td class="col status"><?php echo $_gridrecord->getEmail() ?></td>
+                        <td class="col shipping"><?php echo $val["code"] ?></td>
+                        <td class="col status"><?php echo $val["email"] ?></td>
+                        <td class="col status"><?php echo $coupon_helper->DiscountAmountFormat($rule_data["rule_id"], $rule_data["discount_amount"]);?></td>
+                        <td class="col status"><?php echo $block->formatDate($rule_data["to_date"], \IntlDateFormatter::LONG);?></td>
                     </tr>
                 <?php $no++; endforeach; ?>
             </tbody>

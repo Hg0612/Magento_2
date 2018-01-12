@@ -26,7 +26,7 @@ class InstallSchema implements InstallSchemaInterface
             'slider_id',
             \Magento\Framework\DB\Ddl\Table::TYPE_INTEGER,
             null,
-            ['identity' => true, 'unsigned' => true, 'nullable' => true, 'primary' => true],
+            ['identity' => true, 'unsigned' => true, 'nullable' => false, 'primary' => true],
             'Slider Id'
         )->addColumn(
             'title',

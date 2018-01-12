@@ -4,7 +4,7 @@ namespace Lofmp\Slider\Controller\Marketplace\Slider;
 
 use Magento\Framework\App\Action\Context;
 
-class NewAction extends \Magento\Framework\App\Action\Action  
+class NewAction extends \Magento\Framework\App\Action\Action
 {
     protected $session;
 
@@ -21,7 +21,7 @@ class NewAction extends \Magento\Framework\App\Action\Action
     public function __construct(
         Context $context,
         \Magento\Customer\Model\Session $customerSession,
-        \Lof\Marketplace\Model\SellerFactory $sellerFactory,
+        \Lof\MarketPlace\Model\SellerFactory $sellerFactory,
         \Magento\Framework\Url $frontendUrl,
         \Magento\Framework\View\Result\PageFactory $resultPageFactory
     ) {

@@ -38,7 +38,7 @@ class Coupon extends \Magento\Framework\View\Element\Template {
     public function __construct(
         \Magento\Framework\View\Element\Template\Context $context,
         \Magento\Framework\Registry $registry,
-        \Lofmp\CouponCode\Model\Coupon $CouponFactory,
+        \Lofmp\CouponCode\Model\CouponFactory $CouponFactory,
         \Lof\MarketPlace\Helper\Data $seller_helper,
         \Lofmp\CouponCode\Model\Coupon $coupon,
         \Lofmp\CouponCode\Model\Rule $rule,
@@ -76,5 +76,4 @@ class Coupon extends \Magento\Framework\View\Element\Template {
     public function _prepareLayout() {
         return parent::_prepareLayout ();
     }
-
 }

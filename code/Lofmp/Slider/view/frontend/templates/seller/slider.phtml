@@ -7,6 +7,7 @@ function UR_exists($url){
 }
 if($data):
 	$image = json_decode($data["image_url"]);
+
 	$width = 200;
 	$height = 100;
 	foreach ($image as $value){
@@ -23,10 +24,12 @@ if($data):
 	usort($image, function($a, $b) {
 	    return $a->position <=> $b->position;
 	});
+
 ?>
-<div class="camera_wrap camera_magenta_skin" id="camera_wrap_2" <?php echo ($data['image_width'] != null)? 'style="width: '. $data['image_width'] .'px; margin-left: calc(calc(100% - '. $data['image_width'] .'px)/2)"' : '' ?>>
+
+<div class="camera_wrap camera_magenta_skin" id="camera_wrap_2" style="<?php echo($data['image_width'] > 0 )? 'width:'. $data['image_width'] .'px; margin-left: calc(50% - '.($data['image_width']/2).'px);' : ''?>">
 	<?php foreach ($image as $value): ?>
-    <div data-thumb="<?php echo isset($value->thumbnail)? $value->thumbnail : '' ?>" data-link="<?php echo $value->url_link; ?>" data-target="_blank" data-src="<?php echo (!$data['image_type'])? $helper->getMediaUrl() . $value->image_url : $value->image_url ?>">
+    <div data-thumb="<?php echo isset($value->thumbnail)? $value->thumbnail : '' ?>" data-link="<?php echo $value->url_link; ?>" data-target="_blank" data-src="<?php echo (!$data['image_type'])? $helper->getMediaUrl() . $value->image_url : $value->image_url; ?>">
         <div class="camera_caption fadeFromBottom">
             <?php echo $value->caption; ?>
         </div>

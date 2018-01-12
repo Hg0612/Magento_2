@@ -3,9 +3,6 @@
 	$coupon_helper = $this->helper("Lofmp\CouponCode\Helper\Data");
 	$data = $block->getCouponCode();
 	$rule_data = $coupon_helper->getAllRule();
-	echo "<pre>";
-	print_r($data);
-	die;
 ?>
 <div class="page-title">
   <div class="title_left">
@@ -61,6 +58,8 @@
 				                <th class="column-title"><?php echo __('Email');?> </th>
 				                <th class="column-title"><?php echo __('Created At'); ?> </th>
 				                <th class="column-title"><?php echo __('Expires At'); ?> </th>
+				                <th class="column-title"><?php echo __('Rule Name'); ?> </th>
+				                <th class="column-title"><?php echo __('Discount Amount'); ?> </th>
 				                <th class="column-title"><?php echo __('Times Used'); ?> </th>
 				                <th class="column-title no-link last"><span class="nobr"><?php echo __('Action'); ?></span>
 				                </th>
@@ -70,7 +69,10 @@
 				          	</tr>
 				        </thead>
 				        <tbody>
-				        	<?php foreach ($data as $key => $val) {?>
+				        	<?php
+				        		foreach ($data as $key => $val) {
+				        			$ruleinf = $coupon_helper->getRuleData($val["rule_id"])->getData();
+				        	?>
 					        <tr>
 					        	<td class=""> <input type="checkbox" name="selected[]" value="<?php echo $val["couponcode_id"]; ?>" /> </td>
 					         	<td class=""><?php echo $val["couponcode_id"]; ?></td>
@@ -78,6 +80,8 @@
 					         	<td class=""><?php echo $val["email"]; ?></td>
 					         	<td class=""><?php echo $block->formatDate($val["created_at"], \IntlDateFormatter::LONG);?></td>
 					         	<td class=""><?php echo $block->formatDate($val["expiration_date"], \IntlDateFormatter::LONG);?></td>
+					         	<td class=""><?php echo $ruleinf["name"];?></td>
+					         	<td class=""><?php echo $coupon_helper->DiscountAmountFormat($ruleinf["rule_id"], $ruleinf["discount_amount"]);?></td>
 					         	<td class="last text-center"><?php echo $val["times_used"];?></td>
 					         	<td class="last text-center">
 					         		<a class="delete_coupon" href="<?php echo $block->getUrl('*/*/delete?couponcode_id='. $val["couponcode_id"]);?>" style="font-size: larger; color: #EB5202"><i class="fa fa-trash" aria-hidden="true"></i></a>

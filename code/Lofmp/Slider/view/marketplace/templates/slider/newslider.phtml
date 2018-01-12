@@ -205,6 +205,8 @@ $effect = ['random','simpleFade', 'curtainTopLeft', 'curtainTopRight', 'curtainB
 		inputLocalFont.addEventListener("change",previewImages,false);
 
 		function previewImages(){
+			jQuery("#image_link_input").val("");
+			jQuery("#list_image").find('tbody').empty();
 		    var fileList = this.files;
 
 		    var anyWindow = window.URL || window.webkitURL;
@@ -241,6 +243,7 @@ $effect = ['random','simpleFade', 'curtainTopLeft', 'curtainTopRight', 'curtainB
 	    // -------------------. Show image with url
 
 		jQuery("#image_link_input").on("change",function(){
+			jQuery("#gallery-photo-add").val("");
 			var img_src = [];
 			var imageUrl = jQuery(this).val().split(' ').join('');
 			if (imageUrl !== "") {

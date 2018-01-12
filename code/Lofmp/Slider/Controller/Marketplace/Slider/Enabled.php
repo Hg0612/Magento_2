@@ -25,7 +25,7 @@ class Enabled extends \Magento\Customer\Controller\AbstractAccount {
     public function __construct(
         Context $context,
         \Magento\Customer\Model\Session $customerSession,
-        \Lof\Marketplace\Model\SellerFactory $sellerFactory,
+        \Lof\MarketPlace\Model\SellerFactory $sellerFactory,
         \Magento\Framework\Url $frontendUrl,
         \Lof\MarketPlace\Helper\Data $sellerHelper,
         \Magento\Framework\View\Result\PageFactory $resultPageFactory

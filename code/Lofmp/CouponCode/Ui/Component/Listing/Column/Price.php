@@ -77,7 +77,6 @@ class Price extends Column
                         $currencyCode
                     );
                 }
-                
             }
         }
 
